@@ -1,4 +1,5 @@
 const express = require ("express");
+const db = require("./database.js");
 
 const app = express();
 
@@ -10,4 +11,14 @@ app.get("/", (req,res) => {
 
 app.listen(port, () => {
     console.log("App is listening on port" + port);
+});
+
+//Creates Database
+app.get("/db", (req,res) => {
+    db.run()
+    res.send("Database Online")
 })
+
+
+//Endpoints
+require("./Routes/users.routes")(app);
