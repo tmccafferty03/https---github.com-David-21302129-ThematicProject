@@ -69,6 +69,8 @@ let db = new sqlite3.Database(DBSOURCE, (err) => {
                     tournament_name text,
                     tournament_game text,
                     tournament_host text,
+                    player_id INTEGER,
+                    user_id INTEGER,
                     FOREIGN KEY(player_id) REFERENCES players(player_id)
                     FOREIGN KEY(user_id) REFERENCES users(user_id)
                 )`,
@@ -81,6 +83,53 @@ let db = new sqlite3.Database(DBSOURCE, (err) => {
             }
         )
 
+        db.run(`CREATE TABLE bracket (
+                    bracket_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    bracket_name text,
+                    bracket_size INTEGER,
+                    tournament_id INTEGER,
+                    FOREIGN KEY(tournament_id) REFERENCES tournament(tournament_id)
+                )`,
+            (err) => {
+                if(err){
+                    console.log("Brackets table already created")
+                }else{
+                    console.log("Brackets table created")
+                }
+            }
+        )
+        db.run(`CREATE TABLE round (
+                    round_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    round_name text,
+                    round_no INTEGER,
+                    bracket_id INTEGER,
+                    FOREIGN KEY(bracket_id) REFERENCES bracket(bracket_id)
+                )`,
+            (err) => {
+                if(err){
+                    console.log("Rounds table already created")
+                }else{
+                    console.log("Rounds table created")
+                }
+            }
+        )        
+        db.run(`CREATE TABLE match (
+                    match_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    match_no INTEGER,
+                    participant_score INTEGER,
+                    competitor_score INTEGER,
+                    winner_name text,
+                    round_id INTEGER,
+                    FOREIGN KEY(round_id) REFERENCES round(round_id)
+                )`,
+            (err) => {
+                if(err){
+                    console.log("Match table already created")
+                }else{
+                    console.log("Match table created")
+                }
+            }
+        ) 
     }
 });
 
