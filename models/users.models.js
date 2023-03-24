@@ -54,9 +54,32 @@ const getAllUsers = (done) => {
         })
   }  
 
+  const getHash = function(password,salt){
+    return crypto.pbkdf2Sync(password, salt, 100000,256, "sha256").toString("hex");
+   }
+
+const removeToken = (token, done) => {
+    const sql = "UPDATE users SET session_token=null WHERE session_token=?"
+
+    db.run(sql,[token],(err) => { //Executes SQL query
+        return done(err)
+    })
+}
+
+const setToken = (id, done) => {
+    let token = crypto.randomBytes(16).toString("hex"); //Generates token 
+
+    const sql = "UPDATE users SET session_token=? WHERE user_id=?"  //adds token into users record
+
+    db.run(sql, [token, id], (err) => {
+        return done(err, token)
+    })
+}
 
 
     module.exports = {
         getAllUsers: getAllUsers,
-        addNewUser: addNewUser
+        addNewUser: addNewUser,
+        setToken: setToken,
+        removeToken: removeToken
     }
